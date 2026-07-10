@@ -72,3 +72,11 @@ core
 /nettle.vrs
 /libhogweed.map
 /libnettle.map
+
+# Zig (this repo's zig16 branch adds a build.zig; keymap.h/rotors.h
+# above and sntrup761-encoding.h are committed intentionally -- see
+# build.zig's comments -- so `zig build` doesn't need to compile and
+# run desdata.c/sntrupdata.c itself.)
+.zig-cache/
+zig-out/
+
