@@ -477,9 +477,14 @@ pub fn build(b: *std.Build) void {
     // install step extremely slow (minutes, not seconds). nettle's own
     // headers are all directly in the repo root, so a plain static list
     // (like nettle_sources above) is both simpler and far faster.
+    //
+    // Installed under an "nettle/" subdirectory (zig-out/include/nettle/
+    // aes.h, not zig-out/include/aes.h): real nettle installs headers
+    // this way, and consumers (e.g. QEMU's crypto/*-nettle.c) always
+    // write `#include <nettle/aes.h>`, not `#include <aes.h>`.
     for (nettle_headers) |name| {
-        lib.installHeader(b.path(name), name);
+        lib.installHeader(b.path(name), b.fmt("nettle/{s}", .{name}));
     }
-    lib.installHeader(generated_headers.join(b.allocator, "config.h") catch @panic("OOM"), "nettle-config.h");
-    lib.installHeader(generated_headers.join(b.allocator, "version.h") catch @panic("OOM"), "version.h");
+    lib.installHeader(generated_headers.join(b.allocator, "config.h") catch @panic("OOM"), "nettle/nettle-config.h");
+    lib.installHeader(generated_headers.join(b.allocator, "version.h") catch @panic("OOM"), "nettle/version.h");
 }
