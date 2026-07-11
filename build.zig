@@ -487,4 +487,12 @@ pub fn build(b: *std.Build) void {
     }
     lib.installHeader(generated_headers.join(b.allocator, "config.h") catch @panic("OOM"), "nettle/nettle-config.h");
     lib.installHeader(generated_headers.join(b.allocator, "version.h") catch @panic("OOM"), "nettle/version.h");
+
+    // sha.h was deleted upstream (real, deprecated compatibility header
+    // that just includes sha1.h+sha2.h -- see sha-compat.h, its verbatim
+    // last content before deletion, commit 52aeaa6b "Delete old and
+    // deprecated file sha.h"). Some consumers still assume its presence
+    // (e.g. QEMU's crypto/hash-nettle.c does `#include <nettle/sha.h>`),
+    // matching what real/packaged nettle builds still commonly ship.
+    lib.installHeader(b.path("sha-compat.h"), "nettle/sha.h");
 }
